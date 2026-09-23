@@ -46,47 +46,22 @@ so edits to the package are visible immediately, with no reinstall.
 
 ### pnpm and workspaces
 
-- `pnpm-workspace.yaml` is what turns a folder into a monorepo root. `pnpm install` walks up
-  to find it, so running the command from any member folder installs for all of them.
-- `"workspace:*"` is not a version range. It tells pnpm to look among workspace members
-  instead of the npm registry, matching on the `name` field of their `package.json`,
-  not on the folder name.
-- A workspace dependency is a symlink straight to the sibling folder, while a downloaded
-  dependency is a symlink into `node_modules/.pnpm/`. Because the workspace link points at
-  live source, editing `packages/types` is visible from `apps/api` with no reinstall.
-- Listing a package in `dependencies` is also what grants the right to import it.
-  `axios` added only to `apps/api` is invisible from `packages/types`, which fails with
-  `Cannot find package 'axios'`. Root dependencies are not importable from apps either —
-  the root is for repo-wide tooling such as turbo.
-- The same library appearing in several `package.json` files is normal. Each package declares
-  what it needs, and pnpm still stores one copy on disk.
+- pnpmのworkspace機能を使うと、pnpm installを1回打つだけで全ディレクトリの依存が入る。
+  workspace内ならどのディレクトリで実行しても、pnpmが上に遡ってルートを見つけるので結果は同じ。
+
+- By using pnpm's workspace feature, you can install dependencies for all directories by running `pnpm install` just once.
+  Since pnpm traverses up to locate the root, the result is the same regardless of which directory within the workspace you run the command from.
 
 ### Turborepo
 
-- pnpm collects dependencies; turbo decides the order tasks run in and remembers their results.
-  They solve different problems.
-- `turbo run build` runs each package's `scripts.build`. Nothing declares that link —
-  it is a convention based on matching names, and packages without that script are skipped.
-- `dependsOn: ["^build"]` means "build what this package depends on first". Doing it by hand
-  in the wrong order fails with `Cannot find module '@todo/types'`, because the dependency's
-  `dist/` does not exist yet.
-- The cache key is a hash of the inputs — source files, tsconfig, and the hashes of
-  dependencies — and it is computed before anything runs. `turbo run build --dry` prints it
-  without executing a single task.
-- A cache hit is a file lookup: if `.turbo/cache/<hash>.tar.zst` exists, turbo unpacks the
-  outputs and replays the logs instead of running the command.
-- Without `outputs`, turbo still reports a cache hit but restores no files, leaving a build
-  that claims to be done with an empty `dist/`.
-- Changing a dependency invalidates its dependents too, because their hash includes it.
+- Turborepoはタスクの実行順序を、package.jsonの依存関係から自動で解決してくれる。中身がtscでもvite buildでもechoでも扱えるので、TypeScript専用の道具ではない。
 
-### Build output (`.js` and `.d.ts`)
+- Turborepo automatically resolves the task execution order based on `package.json` dependencies. Since it handles commands like `tsc`, `vite build`, or even `echo`, it is not a tool exclusive to TypeScript.
 
-- "Build" is a task name, not a fixed operation. Here it happens to be `tsc`; elsewhere it is
-  `vite build`, `nest build`, or `prisma generate`.
-- `tsc` reads the config, expands `include`, then follows every import. Type checking
-  `apps/api`'s single source file pulls in 195 files, mostly `lib.*.d.ts` and `@types/node`.
-- `.js` is emitted by default; `.d.ts` only with `declaration: true`. A package that others
-  import needs it; an application at the end of the chain does not.
-- A `.d.ts` is a description with no implementation — it is never executed, and only `tsc`
-  and the editor read it. Even `toUpperCase()` is typed by one line in `lib.es5.d.ts`.
-- `tsc --noEmit` and `tsc` do the same work up to type checking; only the writing step differs.
+- ハッシュ値は入力（srcのソース、tsconfig、依存パッケージのハッシュ）から、実行前に計算される。dist（出力）を書き換えてもハッシュは変わらない。
+
+- The hash value is calculated from the inputs (source code, tsconfig, and dependency package hashes) prior to execution. Modifying the `dist` (output) does not change the hash.
+
+- outputsは「保存・復元するファイル」の指定。ハッシュが一致するキャッシュがあれば、コンパイルを飛ばしてoutputsに書いたファイルを復元する。書き忘れると、 cache hitと表示されるのにdistが空のままになる。
+
+- `outputs` specifies the files to be saved and restored. If a cache with a matching hash exists, the compilation step is skipped, and the files listed in `outputs` are restored. If you forget to include this, the system will report a "cache hit," but the `dist` directory will remain empty.
