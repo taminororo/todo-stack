@@ -1,0 +1,22 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      // ^build = 「依存している package の build を先に実行する」
+      // これがあるので packages/types が apps/api より先にビルドされる
+      "dependsOn": ["^build"],
+      // このタスクが作り出すファイル。cache hit のときはここに書いたものが復元される
+      "outputs": ["dist/**"]
+    },
+    "check-types": {
+      // 型チェックには、依存先の .d.ts (build の成果物) が必要
+      "dependsOn": ["^build"]
+    },
+    "dev": {
+      // 開発サーバーは走り続けるので、キャッシュもしないし終了も待たない
+      "cache": false,
+      "persistent": true
+    },
+    "hello": {}
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "verbatimModuleSyntax": true,
+
+    // src/ の .ts を dist/ に出力する。
+    // declaration で .d.ts (型だけのファイル) も作る。これを apps 側が読む
+    "rootDir": "src",
+    "outDir": "dist",
+    "declaration": true,
+
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}
