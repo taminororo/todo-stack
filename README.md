@@ -44,10 +44,49 @@ so edits to the package are visible immediately, with no reinstall.
 
 ## What I learned
 
-<!-- 自分の言葉で書く -->
-
 ### pnpm and workspaces
+
+- `pnpm-workspace.yaml` is what turns a folder into a monorepo root. `pnpm install` walks up
+  to find it, so running the command from any member folder installs for all of them.
+- `"workspace:*"` is not a version range. It tells pnpm to look among workspace members
+  instead of the npm registry, matching on the `name` field of their `package.json`,
+  not on the folder name.
+- A workspace dependency is a symlink straight to the sibling folder, while a downloaded
+  dependency is a symlink into `node_modules/.pnpm/`. Because the workspace link points at
+  live source, editing `packages/types` is visible from `apps/api` with no reinstall.
+- Listing a package in `dependencies` is also what grants the right to import it.
+  `axios` added only to `apps/api` is invisible from `packages/types`, which fails with
+  `Cannot find package 'axios'`. Root dependencies are not importable from apps either —
+  the root is for repo-wide tooling such as turbo.
+- The same library appearing in several `package.json` files is normal. Each package declares
+  what it needs, and pnpm still stores one copy on disk.
 
 ### Turborepo
 
-### Build output (`.js`, `.d.ts`)
+- pnpm collects dependencies; turbo decides the order tasks run in and remembers their results.
+  They solve different problems.
+- `turbo run build` runs each package's `scripts.build`. Nothing declares that link —
+  it is a convention based on matching names, and packages without that script are skipped.
+- `dependsOn: ["^build"]` means "build what this package depends on first". Doing it by hand
+  in the wrong order fails with `Cannot find module '@todo/types'`, because the dependency's
+  `dist/` does not exist yet.
+- The cache key is a hash of the inputs — source files, tsconfig, and the hashes of
+  dependencies — and it is computed before anything runs. `turbo run build --dry` prints it
+  without executing a single task.
+- A cache hit is a file lookup: if `.turbo/cache/<hash>.tar.zst` exists, turbo unpacks the
+  outputs and replays the logs instead of running the command.
+- Without `outputs`, turbo still reports a cache hit but restores no files, leaving a build
+  that claims to be done with an empty `dist/`.
+- Changing a dependency invalidates its dependents too, because their hash includes it.
+
+### Build output (`.js` and `.d.ts`)
+
+- "Build" is a task name, not a fixed operation. Here it happens to be `tsc`; elsewhere it is
+  `vite build`, `nest build`, or `prisma generate`.
+- `tsc` reads the config, expands `include`, then follows every import. Type checking
+  `apps/api`'s single source file pulls in 195 files, mostly `lib.*.d.ts` and `@types/node`.
+- `.js` is emitted by default; `.d.ts` only with `declaration: true`. A package that others
+  import needs it; an application at the end of the chain does not.
+- A `.d.ts` is a description with no implementation — it is never executed, and only `tsc`
+  and the editor read it. Even `toUpperCase()` is typed by one line in `lib.es5.d.ts`.
+- `tsc --noEmit` and `tsc` do the same work up to type checking; only the writing step differs.
