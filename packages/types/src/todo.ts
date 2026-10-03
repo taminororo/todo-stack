@@ -11,5 +11,5 @@ export interface Todo {
 
 // API のリクエストの形は、Todo から派生させる (ts-basics の 04 でやった形)
 export type CreateTodoRequest = Omit<Todo, "id">;
-export type UpdateTodoRequest = Partial<CreateTodoRequest>;
+export type UpdateTodoRequest = Partial<Omit<Todo, "id">>;
 
