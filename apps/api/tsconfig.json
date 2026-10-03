@@ -1,12 +1,17 @@
 {
   "compilerOptions": {
     "strict": true,
-    "target": "ES2022",
+    "target": "ES2023",
     "module": "NodeNext",
-    "verbatimModuleSyntax": true,
+    "moduleResolution": "NodeNext",
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
 
     "rootDir": "src",
     "outDir": "dist",
+    "sourceMap": true,
 
     "types": ["node"],
     "skipLibCheck": true

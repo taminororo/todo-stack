@@ -1,8 +1,10 @@
-// §2 の確認用。まだ NestJS ではない。
-// 別フォルダにある packages/types の型が、ここから import できることだけを確かめる。
-import type { Todo, CreateTodoRequest } from "@todo/types";
+// アプリの入口。AppModule を起点に、Nest が全部の部品を組み立ててから HTTP サーバーを起動する。
+import { NestFactory } from "@nestjs/core";
+// ESM なので import には .js を付ける（ビルド後の dist/app.module.js を指すため）
+import { AppModule } from "./app.module.js";
 
-const draft: CreateTodoRequest = { title: "牛乳を買う", status: "todo" };
-const saved: Todo = { id: 1, ...draft };
-
-console.log("[api] packages/types の型が使えています:", saved);
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(process.env.PORT ?? 3000);
+}
+await bootstrap();
