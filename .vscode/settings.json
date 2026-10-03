@@ -1,6 +1,0 @@
-{
-  // turbo.json は JSONC (コメントを書ける JSON) なので、そう扱うよう VS Code に伝える
-  "files.associations": {
-    "turbo.json": "jsonc"
-  }
-}
