@@ -1,42 +1,32 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import type { Todo } from "@todo/types";
-import { CreateTodoDto } from "./dto/create-todo.dto.js";
-import { UpdateTodoDto } from "./dto/update-todo.dto.js";
+import { PrismaService } from "../prisma/prisma.service.js";
 
-// まずは DB なしで、メモリ上の配列に保存する。
-// サーバーを再起動すると消える。あとで中身だけを Prisma に差し替える。
 @Injectable()
 export class TodosService {
-  private todos: Todo[] = [];
-  private nextId = 1; // Postgres のシーケンスの代わり
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(dto: CreateTodoDto): Todo {
-    const todo: Todo = { id: this.nextId++, ...dto };
-    this.todos.push(todo);
-    return todo;
-  }
+  // GET /:user/todos: そのユーザーの Todo の一覧を、画面に出す形（Todo[]）にして返す。
+  async findAll(userName: string): Promise<Todo[]> {
+    // ユーザーが DB にいなければ 404。空の一覧を返すと、「いない」と「Todo が 0 件」が区別できない。
+    const user = await this.prisma.user.findUnique({ where: { name: userName } });
+    if (!user) throw new NotFoundException(`User ${userName} not found`);
 
-  findAll(): Todo[] {
-    return this.todos;
-  }
+    // include: 関連するテーブルも一緒に読む。todos、users、todo_tags、tags を結合した結果になる。
+    const rows = await this.prisma.todo.findMany({
+      where: { ownerId: user.id },
+      include: { owner: true, todoTags: { include: { tag: true } } },
+      orderBy: { id: "asc" },
+    });
 
-  // 見つからなければ NotFoundException を投げる。Nest がそれを 404 のレスポンスに変換する。
-  findOne(id: number): Todo {
-    const todo = this.todos.find((t) => t.id === id);
-    if (!todo) throw new NotFoundException(`Todo ${id} not found`);
-    return todo;
-  }
-
-  // findOne を再利用するので、存在しない id なら update も自動で 404 になる。
-  update(id: number, dto: UpdateTodoDto): Todo {
-    const todo = this.findOne(id);
-    Object.assign(todo, dto); // dto に含まれるフィールドだけを上書きする
-    return todo;
-  }
-
-  remove(id: number): Todo {
-    const todo = this.findOne(id);
-    this.todos = this.todos.filter((t) => t.id !== id);
-    return todo;
+    // DB の行の形を、packages/types の Todo の形に組み立て直す。
+    return rows.map((row) =>  ({
+      id: row.id,
+      title: row.title,
+      dueDate: row.dueDate ? row.dueDate.toISOString().slice(0, 10) : null,
+      status: row.status,
+      tags: row.todoTags.map((todoTag) => ({ id: todoTag.tag.id, name: todoTag.tag.name })),
+      owner: row.owner.name,
+    }))
   }
 }

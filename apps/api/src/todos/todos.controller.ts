@@ -1,34 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { TodosService } from './todos.service.js';
-import { CreateTodoDto } from './dto/create-todo.dto.js';
-import { UpdateTodoDto } from './dto/update-todo.dto.js';
+import { Controller, Get, Param } from "@nestjs/common";
+import { TodosService } from "./todos.service.js";
 
-@Controller('todos')
-export class TodosController {
-  constructor(private readonly todosService: TodosService) {}
-
-  @Post()
-  create(@Body() createTodoDto: CreateTodoDto) {
-    return this.todosService.create(createTodoDto);
-  }
+// パスの先頭は :user（例: /taro/todos）。@Param("user") で、その名前を受け取る。
+@Controller(":user/todos")
+export class TodoController {
+  constructor(private readonly todoService: TodosService) {}
 
   @Get()
-  findAll() {
-    return this.todosService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.todosService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
-    return this.todosService.update(+id, updateTodoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.todosService.remove(+id);
+  findAll(@Param("user") user: string) {
+    return this.todoService.findAll(user);
   }
 }
