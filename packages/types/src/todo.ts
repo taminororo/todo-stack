@@ -1,6 +1,7 @@
 // アプリ全体で使う Todo の形。ここが唯一の定義場所で、api も web もこれを import する。
 // ts-basics/src/types/todo.ts で書いたものを持ってきた。
 
+// TODO(human): 状態の一覧を「実行時にも使える配列」として定義し、TodoStatus 型はそこから作る
 export type TodoStatus = "todo" | "doing" | "done";
 
 export interface Todo {
