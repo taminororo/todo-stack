@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TodoStatus {
+  todo
+  doing
+  done
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  todos Todo[]
+  tags  Tag[]
+
+  @@map("users")
+}
+
+model Todo {
+  id       Int        @id @default(autoincrement())
+  title    String
+  dueDate  DateTime?  @db.Date @map("due_date")
+  status   TodoStatus @default(todo)
+  owner    User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId  Int        @map("user_id")
+  todoTags TodoTag[]
+
+  @@map("todos")
+}
+
+model Tag {
+  id       Int       @id @default(autoincrement())
+  name     String
+  owner    User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId  Int       @map("user_id")
+  todoTags TodoTag[]
+
+  @@unique([ownerId, name])
+  @@map("tags")
+}
+
+model TodoTag {
+  todo   Todo @relation(fields: [todoId], references: [id], onDelete: Cascade)
+  todoId Int  @map("todo_id")
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId  Int  @map("tag_id")
+
+  @@id([todoId, tagId])
+  @@map("todo_tags")
+}
