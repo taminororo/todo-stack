@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-// GET / : ユーザーを URL に入れて開く作りなので、いまは taro へのリンクだけ置く。
 export default function HomePage() {
   return (
     <main>

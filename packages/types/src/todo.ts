@@ -1,12 +1,7 @@
-// アプリ全体で使う Todo の形。ここが唯一の定義場所で、api も web もこれを import する。
-
-// ユーザーは URL に含める（例: /taro/todos）。そのため owner はリクエストの本体には入れない。
-
 export const TODO_STATUSES = ["todo", "doing", "done"]
 // 配列からTodoStatusというunionを作ってる
 export type TodoStatus = (typeof TODO_STATUSES)[number];
 
-// タグ1つぶん。外すときは id で指定する。
 export interface Tag {
   id: number;
   name: string; // 例: "買い物"
