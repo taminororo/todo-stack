@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Todo, TodoStatus } from "@todo/types";
 
-const API_URL = process.env.API_URL ?? "http://localhost:3000";
+const API_URL = process.env.API_URL ?? "http://localhost:8080";
 
 const STATUS_LABEL: Record<TodoStatus, string> = {
   todo: "未着手",
