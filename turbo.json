@@ -17,6 +17,10 @@
       "cache": false,
       "persistent": true
     },
+    "test": {
+      // 依存先はソースを直接読むので、build は待たない
+      "outputs": []
+    },
     "hello": {}
   }
 }

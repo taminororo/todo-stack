@@ -1,0 +1,5 @@
+{
+  // nest build 用。テストファイルは dist に出さない
+  "extends": "./tsconfig.json",
+  "exclude": ["src/**/*.spec.ts"]
+}
