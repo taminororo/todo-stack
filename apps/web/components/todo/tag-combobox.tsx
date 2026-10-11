@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { TagNameSchema } from "@todo/types";
 import { PlusIcon } from "lucide-react";
 import {
   Command,
@@ -25,7 +26,8 @@ export function TagCombobox({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const trimmed = query.trim();
-  const canCreate = trimmed !== "" && !candidates.includes(trimmed);
+  // API と同じ条件（1〜30 文字）を満たす名前だけ、新しく作れる
+  const canCreate = TagNameSchema.safeParse(trimmed).success && !candidates.includes(trimmed);
 
   function select(name: string) {
     onSelect(name);

@@ -1,9 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import type { Tag, Todo } from "@todo/types";
+import type { CreateTodoRequest, Tag, Todo, UpdateTodoRequest } from "@todo/types";
 import { PrismaService } from "../prisma/prisma.service.js";
-import type { CreateTodoDto } from "./dto/create-todo.dto.js";
-import type { UpdateTodoDto } from "./dto/update-todo.dto.js";
 
 // Todo を返すときに一緒に読むもの。toTodo() はこの形の行を受け取る
 const todoInclude = { owner: true, todoTags: { include: { tag: true } } } satisfies Prisma.TodoInclude;
@@ -46,7 +44,7 @@ export class TodosService {
     return rows.map(toTodo);
   }
 
-  async create(userName: string, dto: CreateTodoDto): Promise<Todo> {
+  async create(userName: string, dto: CreateTodoRequest): Promise<Todo> {
     const user = await this.findUser(userName);
     const tagNames = [...new Set((dto.tags ?? []).map((name) => name.trim()))];
     const row = await this.prisma.todo.create({
@@ -62,7 +60,7 @@ export class TodosService {
     return toTodo(row);
   }
 
-  async update(userName: string, id: number, dto: UpdateTodoDto): Promise<Todo> {
+  async update(userName: string, id: number, dto: UpdateTodoRequest): Promise<Todo> {
     await this.findOwnTodo(userName, id);
     const row = await this.prisma.todo.update({
       where: { id },

@@ -5,22 +5,22 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CreateUserRequestSchema } from "@todo/types";
 import { useCreateUser } from "@/lib/query/users";
-
-// API の CreateUserDto と同じ条件。送る前に分かる誤りは、ここで止める
-const NAME_PATTERN = /^[\p{L}\p{N}_-]+$/u;
 
 export function CreateUserForm() {
   const router = useRouter();
   const [name, setName] = useState("");
   const create = useCreateUser();
-  const trimmed = name.trim();
-  const invalid = trimmed !== "" && (!NAME_PATTERN.test(trimmed) || trimmed.length > 30 || trimmed === "api");
+  // API と同じスキーマで確かめる。送る前に分かる誤りは、ここで止める
+  const parsed = CreateUserRequestSchema.safeParse({ name });
+  const empty = name.trim() === "";
+  const invalid = !empty && !parsed.success;
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!trimmed || invalid) return;
-    create.mutate({ name: trimmed }, { onSuccess: (user) => router.push(`/${encodeURIComponent(user.name)}`) });
+    if (!parsed.success) return;
+    create.mutate(parsed.data, { onSuccess: (user) => router.push(`/${encodeURIComponent(user.name)}`) });
   }
 
   return (
@@ -35,7 +35,7 @@ export function CreateUserForm() {
           aria-invalid={invalid}
           aria-describedby="new-user-name-hint"
         />
-        <Button type="submit" variant="secondary" disabled={!trimmed || invalid || create.isPending}>
+        <Button type="submit" variant="secondary" disabled={!parsed.success || create.isPending}>
           {create.isPending ? "作成中…" : "作成"}
         </Button>
       </div>

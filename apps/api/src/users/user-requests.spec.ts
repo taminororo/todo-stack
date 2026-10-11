@@ -1,15 +1,12 @@
 import { describe, expect, it } from "@jest/globals";
-import { plainToInstance } from "class-transformer";
-import { validateSync } from "class-validator";
-import { CreateUserDto } from "./create-user.dto.js";
+import { CreateUserRequestSchema } from "@todo/types";
 
 function invalidProps(body: object) {
-  return validateSync(plainToInstance(CreateUserDto, body), { whitelist: true, forbidNonWhitelisted: true }).map(
-    (e) => e.property,
-  );
+  const result = CreateUserRequestSchema.safeParse(body);
+  return result.success ? [] : result.error.issues.map((issue) => String(issue.path[0]));
 }
 
-describe("CreateUserDto", () => {
+describe("CreateUserRequestSchema", () => {
   it.each([["taro"], ["花子"], ["jiro_2-b"]])("name が %j なら通る", (name) => {
     expect(invalidProps({ name })).toEqual([]);
   });
@@ -23,5 +20,9 @@ describe("CreateUserDto", () => {
     ["Web の /api と重なる", { name: "api" }],
   ])("%s なら弾く", (_, body) => {
     expect(invalidProps(body)).toContain("name");
+  });
+
+  it("前後の空白を落としてから確かめる", () => {
+    expect(CreateUserRequestSchema.parse({ name: " hanako " })).toEqual({ name: "hanako" });
   });
 });
