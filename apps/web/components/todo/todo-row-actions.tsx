@@ -3,7 +3,6 @@
 import { useState } from "react";
 import type { Tag, Todo } from "@todo/types";
 import { MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react";
-import { deleteTodo } from "@/app/[user]/actions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,12 +20,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useDeleteTodo } from "@/lib/query/todos";
 import { TodoFormDialog } from "./todo-form-dialog";
-import { useTodoAction } from "./use-todo-action";
 
 export function TodoRowActions({ todo, userTags }: { todo: Todo; userTags: Tag[] }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const { pending, run } = useTodoAction();
+  const remove = useDeleteTodo(todo.owner);
+  const pending = remove.isPending;
 
   return (
     <div className="flex justify-end gap-1">
@@ -64,7 +64,7 @@ export function TodoRowActions({ todo, userTags }: { todo: Todo; userTags: Tag[]
               onClick={(e) => {
                 // 閉じるのは削除が終わってから
                 e.preventDefault();
-                run(() => deleteTodo(todo.owner, todo.id), () => setConfirmOpen(false));
+                remove.mutate(todo.id, { onSuccess: () => setConfirmOpen(false) });
               }}
             >
               削除

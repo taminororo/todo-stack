@@ -1,4 +1,3 @@
-import "server-only";
 import type {
   AddTagRequest,
   CreateTodoRequest,
@@ -7,7 +6,9 @@ import type {
   UpdateTodoRequest,
 } from "@todo/types";
 
-const API_URL = process.env.API_URL ?? "http://localhost:8080";
+// サーバーでは API に直接つなぐ。ブラウザでは next.config.ts の rewrites（/api → API_URL）を通す。
+// API に CORS 設定がないので、ブラウザからは同じオリジンの /api に送る。
+const API_URL = typeof window === "undefined" ? (process.env.API_URL ?? "http://localhost:8080") : "/api";
 
 export class ApiError extends Error {
   constructor(public readonly status: number, message: string) {

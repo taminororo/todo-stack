@@ -3,28 +3,27 @@
 import { useState } from "react";
 import type { Tag, Todo, TodoStatus } from "@todo/types";
 import { PlusIcon } from "lucide-react";
-import { updateTodo } from "@/app/[user]/actions";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { useUpdateTodo } from "@/lib/query/todos";
 import { STATUS_OPTIONS, compareTodos, formatDueDate, isOverdue, todayString } from "@/lib/todo";
 import { StatusSelect } from "./status-select";
 import { TodoFormDialog } from "./todo-form-dialog";
 import { TodoRowActions } from "./todo-row-actions";
 import { TodoTags } from "./todo-tags";
-import { useTodoAction } from "./use-todo-action";
 
 type Filter = TodoStatus | "all";
 
 function StatusCell({ todo }: { todo: Todo }) {
-  const { pending, run } = useTodoAction();
+  const update = useUpdateTodo(todo.owner);
   return (
     <StatusSelect
       size="sm"
       value={todo.status}
-      disabled={pending}
-      onValueChange={(status) => run(() => updateTodo(todo.owner, todo.id, { status }))}
+      disabled={update.isPending}
+      onValueChange={(status) => update.mutate({ id: todo.id, changes: { status } })}
     />
   );
 }
