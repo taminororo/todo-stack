@@ -1,9 +1,11 @@
 import type {
   AddTagRequest,
   CreateTodoRequest,
+  CreateUserRequest,
   Tag,
   Todo,
   UpdateTodoRequest,
+  User,
 } from "@todo/types";
 
 // サーバーでは API に直接つなぐ。ブラウザでは next.config.ts の rewrites（/api → API_URL）を通す。
@@ -43,6 +45,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 const userPath = (user: string) => `/${encodeURIComponent(user)}`;
 
 export const api = {
+  listUsers: () => request<User[]>("/users"),
+  createUser: (body: CreateUserRequest) =>
+    request<User>("/users", { method: "POST", body: JSON.stringify(body) }),
   listTodos: (user: string) => request<Todo[]>(`${userPath(user)}/todos`),
   listTags: (user: string) => request<Tag[]>(`${userPath(user)}/tags`),
   createTodo: (user: string, body: CreateTodoRequest) =>
