@@ -103,7 +103,7 @@ export class TodosService {
 
   async removeTag(userName: string, id: number, tagId: number): Promise<void> {
     await this.findOwnTodo(userName, id);
-    // TODO(human): Todo からタグを外す。付いていないタグを指定されたときの扱いも決める
+    await this.prisma.todoTag.deleteMany({ where: { todoId: id, tagId } });
   }
 
   async findTags(userName: string): Promise<Tag[]> {
