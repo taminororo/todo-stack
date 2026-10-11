@@ -1,64 +1,47 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Todo, TodoStatus } from "@todo/types";
-
-const API_URL = process.env.API_URL ?? "http://localhost:8080";
-
-const STATUS_LABEL: Record<TodoStatus, string> = {
-  todo: "未着手",
-  doing: "進行中",
-  done: "完了",
-};
+import type { Tag, Todo } from "@todo/types";
+import { ArrowLeftIcon } from "lucide-react";
+import { TodoTable } from "@/components/todo/todo-table";
+import { Button } from "@/components/ui/button";
+import { ApiError, api } from "@/lib/api";
 
 async function fetchTodos(user: string): Promise<Todo[]> {
-  const res = await fetch(`${API_URL}/${encodeURIComponent(user)}/todos`, { cache: "no-store" });
-  if (res.status === 404) notFound();
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
+  try {
+    return await api.listTodos(user);
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) notFound();
+    throw e;
+  }
 }
 
-function formatDueDate(dueDate: string | null): string {
-  if (!dueDate) return "-";
-  const [, month, day] = dueDate.split("-");
-  return `${Number(month)}/${Number(day)}`;
+// GET /:user/tags がまだ使えないときは、Todo に付いているタグから候補を作る
+async function fetchTags(user: string, todos: Todo[]): Promise<Tag[]> {
+  try {
+    return await api.listTags(user);
+  } catch {
+    const byId = new Map(todos.flatMap((todo) => todo.tags).map((tag) => [tag.id, tag]));
+    return [...byId.values()];
+  }
 }
 
 export default async function UserTodosPage({ params }: { params: Promise<{ user: string }> }) {
   const { user } = await params;
   const todos = await fetchTodos(user);
+  const tags = await fetchTags(user, todos);
 
   return (
-    <main>
-      <h1>{user} の Todo</h1>
-      {todos.length === 0 ? (
-        <p>Todo はまだありません。</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>タスク名</th>
-              <th>締め切り</th>
-              <th>進捗</th>
-              <th>タグ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {todos.map((todo) => (
-              <tr key={todo.id}>
-                <td>{todo.title}</td>
-                <td>{formatDueDate(todo.dueDate)}</td>
-                <td>{STATUS_LABEL[todo.status]}</td>
-                <td>
-                  {todo.tags.map((tag) => (
-                    <span key={tag.id} className="tag">
-                      {tag.name}
-                    </span>
-                  ))}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+    <main className="mx-auto grid max-w-4xl gap-6 px-4 py-10">
+      <div className="grid gap-1">
+        <Button variant="link" size="sm" className="w-fit px-0 text-muted-foreground" asChild>
+          <Link href="/">
+            <ArrowLeftIcon />
+            ユーザーを選ぶ
+          </Link>
+        </Button>
+        <h1 className="text-2xl font-semibold tracking-tight">{user} の Todo</h1>
+      </div>
+      <TodoTable user={user} todos={todos} userTags={tags} />
     </main>
   );
 }
