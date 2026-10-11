@@ -1,4 +1,4 @@
-export const TODO_STATUSES = ["todo", "doing", "done"]
+export const TODO_STATUSES = ["todo", "doing", "done"] as const;
 // 配列からTodoStatusというunionを作ってる
 export type TodoStatus = (typeof TODO_STATUSES)[number];
 
