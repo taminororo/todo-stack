@@ -1,7 +1,13 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
-import { AddTagDto } from "./dto/add-tag.dto.js";
-import { CreateTodoDto } from "./dto/create-todo.dto.js";
-import { UpdateTodoDto } from "./dto/update-todo.dto.js";
+import {
+  AddTagRequestSchema,
+  CreateTodoRequestSchema,
+  UpdateTodoRequestSchema,
+  type AddTagRequest,
+  type CreateTodoRequest,
+  type UpdateTodoRequest,
+} from "@todo/types";
+import { ZodValidationPipe } from "../common/zod-validation.pipe.js";
 import { TodosService } from "./todos.service.js";
 
 @Controller(":user/todos")
@@ -14,13 +20,17 @@ export class TodoController {
   }
 
   @Post()
-  create(@Param("user") user: string, @Body() dto: CreateTodoDto) {
-    return this.todoService.create(user, dto);
+  create(@Param("user") user: string, @Body(new ZodValidationPipe(CreateTodoRequestSchema)) body: CreateTodoRequest) {
+    return this.todoService.create(user, body);
   }
 
   @Patch(":id")
-  update(@Param("user") user: string, @Param("id", ParseIntPipe) id: number, @Body() dto: UpdateTodoDto) {
-    return this.todoService.update(user, id, dto);
+  update(
+    @Param("user") user: string,
+    @Param("id", ParseIntPipe) id: number,
+    @Body(new ZodValidationPipe(UpdateTodoRequestSchema)) body: UpdateTodoRequest,
+  ) {
+    return this.todoService.update(user, id, body);
   }
 
   @Delete(":id")
@@ -30,8 +40,12 @@ export class TodoController {
   }
 
   @Post(":id/tags")
-  addTag(@Param("user") user: string, @Param("id", ParseIntPipe) id: number, @Body() dto: AddTagDto) {
-    return this.todoService.addTag(user, id, dto.name);
+  addTag(
+    @Param("user") user: string,
+    @Param("id", ParseIntPipe) id: number,
+    @Body(new ZodValidationPipe(AddTagRequestSchema)) body: AddTagRequest,
+  ) {
+    return this.todoService.addTag(user, id, body.name);
   }
 
   @Delete(":id/tags/:tagId")
