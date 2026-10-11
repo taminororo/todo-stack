@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, type FormEvent, type ReactNode } from "react";
-import type { Tag, Todo, TodoStatus, UpdateTodoRequest } from "@todo/types";
+import {
+  CreateTodoRequestSchema,
+  UpdateTodoRequestSchema,
+  type Tag,
+  type Todo,
+  type TodoStatus,
+  type UpdateTodoRequest,
+} from "@todo/types";
 import { PlusIcon, XIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,23 +56,25 @@ export function TodoFormDialog({ user, userTags, mode, todo, children }: Props) 
     setOpen(next);
   }
 
+  // API と同じスキーマで確かめる（空白だけ・101 文字以上のタスク名などは送らない）
+  const parsed = CreateTodoRequestSchema.safeParse({ title, dueDate: dueDate || null, status, tags });
+
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const trimmed = title.trim();
-    if (!trimmed) return;
-    const due = dueDate || null;
+    if (!parsed.success) return;
 
     if (mode === "create") {
-      create.mutate({ title: trimmed, dueDate: due, status, tags }, { onSuccess: close });
+      create.mutate(parsed.data, { onSuccess: close });
       return;
     }
     // PATCH は送ったフィールドだけ変わるので、変えたものだけ送る
+    const { title: nextTitle, dueDate: nextDue = null, status: nextStatus } = parsed.data;
     const changes: UpdateTodoRequest = {};
-    if (trimmed !== todo.title) changes.title = trimmed;
-    if (due !== todo.dueDate) changes.dueDate = due;
-    if (status !== todo.status) changes.status = status;
+    if (nextTitle !== todo.title) changes.title = nextTitle;
+    if (nextDue !== todo.dueDate) changes.dueDate = nextDue;
+    if (nextStatus !== todo.status) changes.status = nextStatus;
     if (Object.keys(changes).length === 0) return close();
-    update.mutate({ id: todo.id, changes }, { onSuccess: close });
+    update.mutate({ id: todo.id, changes: UpdateTodoRequestSchema.parse(changes) }, { onSuccess: close });
   }
 
   const candidates = userTags.map((tag) => tag.name).filter((name) => !tags.includes(name));
@@ -136,7 +145,7 @@ export function TodoFormDialog({ user, userTags, mode, todo, children }: Props) 
                 キャンセル
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={pending || !title.trim()}>
+            <Button type="submit" disabled={pending || !parsed.success}>
               {pending ? "保存中…" : mode === "create" ? "追加" : "保存"}
             </Button>
           </DialogFooter>
