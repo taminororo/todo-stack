@@ -4,13 +4,16 @@ import type { Tag, Todo } from "@todo/types";
 import { ArrowLeftIcon } from "lucide-react";
 import { TodoTable } from "@/components/todo/todo-table";
 import { Button } from "@/components/ui/button";
-import { ApiError, api } from "@/lib/api";
+import { ApiUnavailable } from "@/components/api-unavailable";
+import { ApiError, ApiUnavailableError, api } from "@/lib/api";
 
-async function fetchTodos(user: string): Promise<Todo[]> {
+// 接続できないときは null を返し、500 にせず画面で知らせる
+async function fetchTodos(user: string): Promise<Todo[] | null> {
   try {
     return await api.listTodos(user);
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) notFound();
+    if (e instanceof ApiUnavailableError) return null;
     throw e;
   }
 }
@@ -28,7 +31,7 @@ async function fetchTags(user: string, todos: Todo[]): Promise<Tag[]> {
 export default async function UserTodosPage({ params }: { params: Promise<{ user: string }> }) {
   const { user } = await params;
   const todos = await fetchTodos(user);
-  const tags = await fetchTags(user, todos);
+  const tags = todos ? await fetchTags(user, todos) : [];
 
   return (
     <main className="mx-auto grid max-w-4xl gap-6 px-4 py-10">
@@ -41,7 +44,7 @@ export default async function UserTodosPage({ params }: { params: Promise<{ user
         </Button>
         <h1 className="text-2xl font-semibold tracking-tight">{user} の Todo</h1>
       </div>
-      <TodoTable user={user} todos={todos} userTags={tags} />
+      {todos ? <TodoTable user={user} todos={todos} userTags={tags} /> : <ApiUnavailable />}
     </main>
   );
 }

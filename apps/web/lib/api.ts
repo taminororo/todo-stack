@@ -15,12 +15,24 @@ export class ApiError extends Error {
   }
 }
 
+// API に接続できなかった（起動前・再起動中など）。ステータスコードはない。
+export class ApiUnavailableError extends Error {
+  constructor(cause: unknown) {
+    super(`API に接続できません (${API_URL})`, { cause });
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
-    cache: "no-store",
-    ...init,
-    headers: { "Content-Type": "application/json", ...init?.headers },
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      cache: "no-store",
+      ...init,
+      headers: { "Content-Type": "application/json", ...init?.headers },
+    });
+  } catch (e) {
+    throw new ApiUnavailableError(e);
+  }
   if (!res.ok) throw new ApiError(res.status, `API error: ${res.status} ${init?.method ?? "GET"} ${path}`);
   // DELETE などは本体なしで返ってくる
   if (res.status === 204 || res.headers.get("content-length") === "0") return undefined as T;
