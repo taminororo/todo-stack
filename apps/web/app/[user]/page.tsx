@@ -1,37 +1,33 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Tag, Todo } from "@todo/types";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { ArrowLeftIcon } from "lucide-react";
-import { TodoTable } from "@/components/todo/todo-table";
+import { TodoBoard } from "@/components/todo/todo-board";
 import { Button } from "@/components/ui/button";
 import { ApiUnavailable } from "@/components/api-unavailable";
-import { ApiError, ApiUnavailableError, api } from "@/lib/api";
+import { ApiError, ApiUnavailableError } from "@/lib/api";
+import { getQueryClient } from "@/lib/query/client";
+import { tagsQuery, todosQuery } from "@/lib/query/options";
 
-// 接続できないときは null を返し、500 にせず画面で知らせる
-async function fetchTodos(user: string): Promise<Todo[] | null> {
+// サーバーで先に取得してキャッシュに入れ、HydrationBoundary でブラウザの QueryClient に渡す。
+// 404 と接続失敗はここで見分けたいので、エラーを投げる fetchQuery を使う。
+async function prefetch(user: string) {
+  const queryClient = getQueryClient();
   try {
-    return await api.listTodos(user);
+    await queryClient.fetchQuery(todosQuery(user));
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) notFound();
     if (e instanceof ApiUnavailableError) return null;
     throw e;
   }
-}
-
-// GET /:user/tags がまだ使えないときは、Todo に付いているタグから候補を作る
-async function fetchTags(user: string, todos: Todo[]): Promise<Tag[]> {
-  try {
-    return await api.listTags(user);
-  } catch {
-    const byId = new Map(todos.flatMap((todo) => todo.tags).map((tag) => [tag.id, tag]));
-    return [...byId.values()];
-  }
+  // タグは取れなくても画面は出せるので、失敗を投げない prefetchQuery にする
+  await queryClient.prefetchQuery(tagsQuery(user));
+  return queryClient;
 }
 
 export default async function UserTodosPage({ params }: { params: Promise<{ user: string }> }) {
   const { user } = await params;
-  const todos = await fetchTodos(user);
-  const tags = todos ? await fetchTags(user, todos) : [];
+  const queryClient = await prefetch(user);
 
   return (
     <main className="mx-auto grid max-w-4xl gap-6 px-4 py-10">
@@ -44,7 +40,13 @@ export default async function UserTodosPage({ params }: { params: Promise<{ user
         </Button>
         <h1 className="text-2xl font-semibold tracking-tight">{user} の Todo</h1>
       </div>
-      {todos ? <TodoTable user={user} todos={todos} userTags={tags} /> : <ApiUnavailable />}
+      {queryClient ? (
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <TodoBoard user={user} />
+        </HydrationBoundary>
+      ) : (
+        <ApiUnavailable />
+      )}
     </main>
   );
 }

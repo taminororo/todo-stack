@@ -3,7 +3,6 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import type { Tag, Todo, TodoStatus, UpdateTodoRequest } from "@todo/types";
 import { PlusIcon, XIcon } from "lucide-react";
-import { createTodo, updateTodo } from "@/app/[user]/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,8 +18,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { StatusSelect } from "./status-select";
+import { useCreateTodo, useUpdateTodo } from "@/lib/query/todos";
 import { TagCombobox } from "./tag-combobox";
-import { useTodoAction } from "./use-todo-action";
 
 type Props = { user: string; userTags: Tag[]; children: ReactNode } & (
   | { mode: "create"; todo?: undefined }
@@ -35,7 +34,10 @@ export function TodoFormDialog({ user, userTags, mode, todo, children }: Props) 
   const [dueDate, setDueDate] = useState("");
   const [status, setStatus] = useState<TodoStatus>("todo");
   const [tags, setTags] = useState<string[]>([]);
-  const { pending, run } = useTodoAction();
+  const create = useCreateTodo(user);
+  const update = useUpdateTodo(user);
+  const pending = create.isPending || update.isPending;
+  const close = () => setOpen(false);
 
   function handleOpenChange(next: boolean) {
     if (next) {
@@ -54,7 +56,7 @@ export function TodoFormDialog({ user, userTags, mode, todo, children }: Props) 
     const due = dueDate || null;
 
     if (mode === "create") {
-      run(() => createTodo(user, { title: trimmed, dueDate: due, status, tags }), () => setOpen(false));
+      create.mutate({ title: trimmed, dueDate: due, status, tags }, { onSuccess: close });
       return;
     }
     // PATCH は送ったフィールドだけ変わるので、変えたものだけ送る
@@ -62,8 +64,8 @@ export function TodoFormDialog({ user, userTags, mode, todo, children }: Props) 
     if (trimmed !== todo.title) changes.title = trimmed;
     if (due !== todo.dueDate) changes.dueDate = due;
     if (status !== todo.status) changes.status = status;
-    if (Object.keys(changes).length === 0) return setOpen(false);
-    run(() => updateTodo(user, todo.id, changes), () => setOpen(false));
+    if (Object.keys(changes).length === 0) return close();
+    update.mutate({ id: todo.id, changes }, { onSuccess: close });
   }
 
   const candidates = userTags.map((tag) => tag.name).filter((name) => !tags.includes(name));
