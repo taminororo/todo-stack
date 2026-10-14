@@ -1,8 +1,8 @@
 "use client";
 
 import type { TodoStatus } from "@todo/types";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { STATUS_OPTIONS } from "@/lib/todo";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@todo/ui/components/select";
+import { STATUS_OPTIONS } from "../todo";
 
 export function StatusSelect({
   value,

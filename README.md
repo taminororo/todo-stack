@@ -11,9 +11,14 @@ todo-stack/
 ├── turbo.json            task graph (order) and caching rules
 ├── package.json          root: repo-wide tools only (turbo, typescript)
 ├── packages/
-│   └── types/            @todo/types — shared type definitions, no runtime logic
+│   ├── types/            @todo/types — shared type definitions and zod schemas
+│   ├── ui/               @todo/ui — shadcn components (src/components/*.tsx) and cn()
+│   ├── api-client/       @todo/api-client — fetch wrappers for the API (validated with @todo/types)
+│   └── api-hooks/        @todo/api-hooks — TanStack Query hooks, query keys and options
 └── apps/
-    └── api/              @todo/api — imports @todo/types (NestJS goes here in §4)
+    ├── api/              @todo/api — NestJS + Prisma
+    └── web/              @todo/web — Next.js; screen-only components sit next to the screen
+                          (app/components/ for the home page, app/[user]/components/ for the todo board)
 ```
 
 `packages/*` are libraries that apps import. `apps/*` are things you can run.

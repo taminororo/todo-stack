@@ -10,8 +10,8 @@ import {
   type UpdateTodoRequest,
 } from "@todo/types";
 import { PlusIcon, XIcon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@todo/ui/components/badge";
+import { Button } from "@todo/ui/components/button";
 import {
   Dialog,
   DialogClose,
@@ -21,11 +21,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@todo/ui/components/dialog";
+import { Input } from "@todo/ui/components/input";
+import { Label } from "@todo/ui/components/label";
 import { StatusSelect } from "./status-select";
-import { useCreateTodo, useUpdateTodo } from "@/lib/query/todos";
+import { useCreateTodo, useUpdateTodo } from "@todo/api-hooks";
 import { TagCombobox } from "./tag-combobox";
 
 type Props = { user: string; userTags: Tag[]; children: ReactNode } & (

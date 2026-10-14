@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CreateTodoRequest, Todo, UpdateTodoRequest } from "@todo/types";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { api } from "@todo/api-client";
 import { todoKeys } from "./keys";
 import { tagsQuery, todosQuery } from "./options";
 

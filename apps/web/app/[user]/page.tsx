@@ -2,12 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { ArrowLeftIcon } from "lucide-react";
-import { TodoBoard } from "@/components/todo/todo-board";
-import { Button } from "@/components/ui/button";
-import { ApiUnavailable } from "@/components/api-unavailable";
-import { ApiError, ApiUnavailableError } from "@/lib/api";
-import { getQueryClient } from "@/lib/query/client";
-import { tagsQuery, todosQuery } from "@/lib/query/options";
+import { TodoBoard } from "./components/todo-board";
+import { Button } from "@todo/ui/components/button";
+import { ApiUnavailable } from "./components/api-unavailable";
+import { ApiError, ApiUnavailableError } from "@todo/api-client";
+import { getQueryClient, tagsQuery, todosQuery } from "@todo/api-hooks";
 
 // サーバーで先に取得してキャッシュに入れ、HydrationBoundary でブラウザの QueryClient に渡す。
 // 404 と接続失敗はここで見分けたいので、エラーを投げる fetchQuery を使う。

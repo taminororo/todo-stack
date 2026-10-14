@@ -12,15 +12,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+} from "@todo/ui/components/alert-dialog";
+import { Button } from "@todo/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useDeleteTodo } from "@/lib/query/todos";
+} from "@todo/ui/components/dropdown-menu";
+import { useDeleteTodo } from "@todo/api-hooks";
 import { TodoFormDialog } from "./todo-form-dialog";
 
 export function TodoRowActions({ todo, userTags }: { todo: Todo; userTags: Tag[] }) {

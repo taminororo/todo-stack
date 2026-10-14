@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { afterAll, afterEach, beforeAll } from "vitest";
 import { server } from "./server";
 
-// ブラウザでは lib/api.ts が "/api/..." に送る。Node の fetch は相対 URL を解決できないので、
+// ブラウザでは @todo/api-client が "/api/..." に送る。Node の fetch は相対 URL を解決できないので、
 // jsdom の location（http://localhost:3000 相当）を基準に絶対 URL へ直す。
 const nodeFetch = globalThis.fetch;
 globalThis.fetch = (input, init) =>

@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RefreshCwIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@todo/ui/components/button";
 
 export function ApiUnavailable() {
   const router = useRouter();
