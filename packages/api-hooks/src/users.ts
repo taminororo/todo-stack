@@ -3,7 +3,7 @@
 import { useMutation } from "@tanstack/react-query";
 import type { CreateUserRequest } from "@todo/types";
 import { toast } from "sonner";
-import { ApiError, api } from "@/lib/api";
+import { ApiError, api } from "@todo/api-client";
 
 export function useCreateUser() {
   return useMutation({

@@ -2,9 +2,9 @@
 
 import type { Tag, Todo } from "@todo/types";
 import { PlusIcon, XIcon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useAddTag, useRemoveTag } from "@/lib/query/todos";
+import { Badge } from "@todo/ui/components/badge";
+import { Button } from "@todo/ui/components/button";
+import { useAddTag, useRemoveTag } from "@todo/api-hooks";
 import { TagCombobox } from "./tag-combobox";
 
 // 1行ぶんのタグ。× で外し、+ で付ける（POST/DELETE /:user/todos/:id/tags）。

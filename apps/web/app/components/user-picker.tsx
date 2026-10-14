@@ -2,9 +2,9 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@todo/ui/components/button";
+import { Input } from "@todo/ui/components/input";
+import { Label } from "@todo/ui/components/label";
 
 export function UserPicker() {
   const router = useRouter();

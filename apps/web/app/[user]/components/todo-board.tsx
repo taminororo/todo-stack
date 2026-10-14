@@ -1,6 +1,6 @@
 "use client";
 
-import { useTags, useTodos } from "@/lib/query/todos";
+import { useTags, useTodos } from "@todo/api-hooks";
 import { TodoTable } from "./todo-table";
 
 // キャッシュから Todo とタグを読んで表に渡す。サーバーで prefetch 済みなら最初から data がある。

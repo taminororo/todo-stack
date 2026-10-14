@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api } from "@todo/api-client";
 import { todoKeys } from "./keys";
 
 // サーバーの prefetch とクライアントの useQuery で同じ定義を使う

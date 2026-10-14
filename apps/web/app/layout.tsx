@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Geist } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner";
-import { cn } from "@/lib/utils";
+import { Toaster } from "@todo/ui/components/sonner";
+import { cn } from "@todo/ui/lib/utils";
 import { Providers } from "./providers";
 import "./globals.css";
 

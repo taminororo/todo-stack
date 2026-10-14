@@ -10,8 +10,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+} from "@todo/ui/components/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@todo/ui/components/popover";
 
 // 既存タグから選ぶか、入力した名前で新しく作る。どちらも onSelect(name) を呼ぶ。
 export function TagCombobox({

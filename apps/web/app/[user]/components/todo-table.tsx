@@ -3,12 +3,12 @@
 import { useState } from "react";
 import type { Tag, Todo, TodoStatus } from "@todo/types";
 import { PlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
-import { useUpdateTodo } from "@/lib/query/todos";
-import { STATUS_OPTIONS, compareTodos, formatDueDate, isOverdue, todayString } from "@/lib/todo";
+import { Button } from "@todo/ui/components/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@todo/ui/components/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@todo/ui/components/table";
+import { cn } from "@todo/ui/lib/utils";
+import { useUpdateTodo } from "@todo/api-hooks";
+import { STATUS_OPTIONS, compareTodos, formatDueDate, isOverdue, todayString } from "../todo";
 import { StatusSelect } from "./status-select";
 import { TodoFormDialog } from "./todo-form-dialog";
 import { TodoRowActions } from "./todo-row-actions";

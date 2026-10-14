@@ -1,6 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreateUserForm } from "@/components/create-user-form";
-import { UserPicker } from "@/components/user-picker";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@todo/ui/components/card";
+import { CreateUserForm } from "./components/create-user-form";
+import { UserPicker } from "./components/user-picker";
 
 export default function HomePage() {
   return (
