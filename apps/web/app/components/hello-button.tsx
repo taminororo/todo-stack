@@ -1,32 +1,36 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@todo/ui/components/button";
-import { useState, type ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@todo/ui/components/dialog";
 
 export function HelloButton() {
-  function handleClick() {
-      const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-return (
-  <>
-    <Button onClick={() => setOpen(true)}>こんにちは</Button>
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
-  </>
-);
+  function handleClick() {
+    setOpen(true);
   }
 
+  return (
+    <>
+      <Button onClick={handleClick}>Click me, Open a dialog</Button>
+      <Dialog open={open} onOpenChange={(next) => setOpen(next)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>ボタンを押すと開くダイアログです。</DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+      <Dialog >
+        
+      </Dialog>
+    </>
+  );
 }
