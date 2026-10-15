@@ -23,6 +23,7 @@ describe("CreateUserForm", () => {
 
     await user.type(screen.getByLabelText("新しいユーザー"), " hanako ");
     await user.click(screen.getByRole("button", { name: "作成" }));
+    await user.click(await screen.findByRole("button", { name: "はい" }));
 
     await waitFor(() => expect(push).toHaveBeenCalledWith("/hanako"));
     expect(body).toEqual({ name: "hanako" });
@@ -36,12 +37,32 @@ describe("CreateUserForm", () => {
     expect(screen.getByRole("button", { name: "作成" })).toBeDisabled();
   });
 
+  it("確認ダイアログで「はい」以外を選ぶと、作成しない", async () => {
+    let called = false;
+    server.use(
+      http.post("/api/users", () => {
+        called = true;
+        return HttpResponse.json({ id: 2, name: "hanako" }, { status: 201 });
+      }),
+    );
+    const { user } = renderWithClient(<CreateUserForm />);
+
+    await user.type(screen.getByLabelText("新しいユーザー"), "hanako");
+    await user.click(screen.getByRole("button", { name: "作成" }));
+    await user.click(await screen.findByRole("button", { name: "キャンセル" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(called).toBe(false);
+    expect(push).not.toHaveBeenCalled();
+  });
+
   it("409 が返ったら、名前が重なっていると知らせる", async () => {
     server.use(http.post("/api/users", () => new HttpResponse(null, { status: 409 })));
     const { user } = renderWithClient(<CreateUserForm />);
 
     await user.type(screen.getByLabelText("新しいユーザー"), "taro");
     await user.click(screen.getByRole("button", { name: "作成" }));
+    await user.click(await screen.findByRole("button", { name: "はい" }));
 
     expect(await screen.findByText("その名前のユーザーはもういます。")).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();

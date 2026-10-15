@@ -28,9 +28,6 @@ export function HelloButton() {
           </DialogHeader>
         </DialogContent>
       </Dialog>
-      <Dialog >
-        
-      </Dialog>
     </>
   );
 }

@@ -1,12 +1,20 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type SyntheticEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@todo/ui/components/button";
 import { Input } from "@todo/ui/components/input";
 import { Label } from "@todo/ui/components/label";
 import { CreateUserRequestSchema } from "@todo/types";
 import { useCreateUser } from "@todo/api-hooks";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@todo/ui/components/dialog";
 
 export function CreateUserForm() {
   const router = useRouter();
@@ -17,9 +25,19 @@ export function CreateUserForm() {
   const empty = name.trim() === "";
   const invalid = !empty && !parsed.success;
 
-  function handleSubmit(e: FormEvent) {
+  const [open, setOpen] = useState(false);
+
+  // 作成ボタン（と Enter キー）では、送らずに確認ダイアログを開く
+  function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!parsed.success) return;
+    setOpen(true);
+  }
+
+  // 「はい」を押したときだけ、従来の作成処理を行う。それ以外で閉じたときは何も送らない
+  function handleConfirm() {
+    if (!parsed.success) return;
+    setOpen(false);
     create.mutate(parsed.data, { onSuccess: (user) => router.push(`/${encodeURIComponent(user.name)}`) });
   }
 
@@ -35,9 +53,28 @@ export function CreateUserForm() {
           aria-invalid={invalid}
           aria-describedby="new-user-name-hint"
         />
-        <Button type="submit" variant="secondary" disabled={!parsed.success || create.isPending}>
-          {create.isPending ? "作成中…" : "作成"}
-        </Button>
+        <>
+          <Button type="submit" variant="secondary" disabled={!parsed.success || create.isPending}>
+            {create.isPending ? "作成中…" : "作成"}
+          </Button>
+          <Dialog open={open} onOpenChange={(next) => setOpen(next)}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>新しいユーザーを作成しますか？</DialogTitle>
+                <DialogDescription>作成ボタンを押すと、ユーザーが作成されます。この操作は取り消せません。</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                  キャンセル
+                </Button>
+                <Button type="button" onClick={handleConfirm}>
+                  はい
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+        
       </div>
       <p id="new-user-name-hint" className={invalid ? "text-sm text-destructive" : "text-sm text-muted-foreground"}>
         文字・数字・「_」「-」で 30 文字まで。
