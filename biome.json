@@ -24,6 +24,29 @@
 		},
 		"parser": { "unsafeParameterDecoratorsEnabled": true }
 	},
+	"overrides": [
+		{
+			"includes": ["packages/ui/src/components/input-group.tsx"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"useSemanticElements": "off",
+						"useKeyWithClickEvents": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/*.spec.ts"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noExplicitAny": "off"
+					}
+				}
+			}
+		}
+	],
 	"assist": {
 		"enabled": true,
 		"actions": {

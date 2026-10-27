@@ -55,37 +55,36 @@ export function CreateUserForm() {
 					aria-invalid={invalid}
 					aria-describedby="new-user-name-hint"
 				/>
-				
-					<Button
-						type="submit"
-						variant="secondary"
-						disabled={!parsed.success || create.isPending}
-					>
-						{create.isPending ? "作成中…" : "作成"}
-					</Button>
-					<Dialog open={open} onOpenChange={(next) => setOpen(next)}>
-						<DialogContent>
-							<DialogHeader>
-								<DialogTitle>新しいユーザーを作成しますか？</DialogTitle>
-								<DialogDescription>
-									作成ボタンを押すと、ユーザーが作成されます。この操作は取り消せません。
-								</DialogDescription>
-							</DialogHeader>
-							<DialogFooter>
-								<Button
-									type="button"
-									variant="outline"
-									onClick={() => setOpen(false)}
-								>
-									キャンセル
-								</Button>
-								<Button type="button" onClick={handleConfirm}>
-									はい
-								</Button>
-							</DialogFooter>
-						</DialogContent>
-					</Dialog>
-				
+
+				<Button
+					type="submit"
+					variant="secondary"
+					disabled={!parsed.success || create.isPending}
+				>
+					{create.isPending ? "作成中…" : "作成"}
+				</Button>
+				<Dialog open={open} onOpenChange={(next) => setOpen(next)}>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>新しいユーザーを作成しますか？</DialogTitle>
+							<DialogDescription>
+								作成ボタンを押すと、ユーザーが作成されます。この操作は取り消せません。
+							</DialogDescription>
+						</DialogHeader>
+						<DialogFooter>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => setOpen(false)}
+							>
+								キャンセル
+							</Button>
+							<Button type="button" onClick={handleConfirm}>
+								はい
+							</Button>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
 			</div>
 			<p
 				id="new-user-name-hint"

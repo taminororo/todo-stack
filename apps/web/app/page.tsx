@@ -12,17 +12,17 @@ export default function HomePage() {
 	return (
 		<main className="mx-auto max-w-md px-4 py-20">
 			<Card>
-					<CardHeader>
-						<CardTitle>todo-stack</CardTitle>
-						<CardDescription>
-							見たいユーザーの名前を入れるか、新しく作ってください。
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="grid gap-6">
-						<UserPicker />
-						<CreateUserForm />
-					</CardContent>
-				</Card>
+				<CardHeader>
+					<CardTitle>todo-stack</CardTitle>
+					<CardDescription>
+						見たいユーザーの名前を入れるか、新しく作ってください。
+					</CardDescription>
+				</CardHeader>
+				<CardContent className="grid gap-6">
+					<UserPicker />
+					<CreateUserForm />
+				</CardContent>
+			</Card>
 		</main>
 	);
 }
