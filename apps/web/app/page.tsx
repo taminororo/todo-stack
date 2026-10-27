@@ -1,7 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@todo/ui/components/card";
 import { CreateUserForm } from "./components/create-user-form";
 import { UserPicker } from "./components/user-picker";
-import { HelloButton } from "./components/hello-button";
 
 export default function HomePage() {
   return (
@@ -17,7 +16,6 @@ export default function HomePage() {
             <CreateUserForm />
           </CardContent>
         </Card>
-        <HelloButton />
       </>
     </main>
   );
