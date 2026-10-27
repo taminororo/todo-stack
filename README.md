@@ -36,13 +36,13 @@ npx turbo run build --dry             # show the task graph and hashes, run noth
 
 ## How the pieces fit
 
-| File | Decides |
-|---|---|
-| `pnpm-workspace.yaml` | which folders count as workspace members |
-| `apps/api/package.json` → `"@todo/types": "workspace:*"` | that this dependency comes from a member, not from npm |
-| `turbo.json` → `dependsOn: ["^build"]` | that a package's dependencies are built first |
-| `turbo.json` → `outputs: ["dist/**"]` | which files are saved to and restored from the cache |
-| `packages/types/package.json` → `"types": "./dist/index.d.ts"` | where consumers read type information from |
+| File                                                           | Decides                                                |
+| -------------------------------------------------------------- | ------------------------------------------------------ |
+| `pnpm-workspace.yaml`                                          | which folders count as workspace members               |
+| `apps/api/package.json` → `"@todo/types": "workspace:*"`       | that this dependency comes from a member, not from npm |
+| `turbo.json` → `dependsOn: ["^build"]`                         | that a package's dependencies are built first          |
+| `turbo.json` → `outputs: ["dist/**"]`                          | which files are saved to and restored from the cache   |
+| `packages/types/package.json` → `"types": "./dist/index.d.ts"` | where consumers read type information from             |
 
 Running `pnpm install` symlinks `apps/api/node_modules/@todo/types` → `packages/types`,
 so edits to the package are visible immediately, with no reinstall.

@@ -8,25 +8,29 @@ export const TodoStatusSchema = z.enum(TODO_STATUSES);
 export type TodoStatus = z.infer<typeof TodoStatusSchema>;
 
 // タグ名。前後の空白を除いて 1〜30 文字
-export const TagNameSchema = z.string().trim().min(1, "tag name must not be blank").max(30);
+export const TagNameSchema = z
+	.string()
+	.trim()
+	.min(1, "tag name must not be blank")
+	.max(30);
 
 // 締め切り。"2026-08-31" の形（YYYY-MM-DD）だけ。null は「締め切りなし」
 export const DueDateSchema = z.iso.date().nullable();
 
 export const TagSchema = z.object({
-  id: z.number().int(),
-  name: z.string(), // 例: "買い物"
+	id: z.number().int(),
+	name: z.string(), // 例: "買い物"
 });
 export type Tag = z.infer<typeof TagSchema>;
 
 // GET /:user/todos が返す1行ぶん。例: 牛乳を買う | 8/31 | todo | 買い物, 食品 | taro
 export const TodoSchema = z.object({
-  id: z.number().int(),
-  title: z.string(), // タスク名
-  dueDate: DueDateSchema, // 締め切り
-  status: TodoStatusSchema, // 進捗ステータス
-  tags: z.array(TagSchema), // 付いているタグ。なければ []
-  owner: z.string(), // 持ち主のユーザー名。例: "taro"
+	id: z.number().int(),
+	title: z.string(), // タスク名
+	dueDate: DueDateSchema, // 締め切り
+	status: TodoStatusSchema, // 進捗ステータス
+	tags: z.array(TagSchema), // 付いているタグ。なければ []
+	owner: z.string(), // 持ち主のユーザー名。例: "taro"
 });
 export type Todo = z.infer<typeof TodoSchema>;
 
@@ -35,22 +39,24 @@ export type Todo = z.infer<typeof TodoSchema>;
 // tags はタグ名で渡す。そのユーザーにまだないタグは、新しく作る。
 // strictObject: 知らないプロパティ（owner など）が来たら弾く
 export const CreateTodoRequestSchema = z.strictObject({
-  title: z.string().trim().min(1, "title must not be blank").max(100),
-  dueDate: DueDateSchema.optional(),
-  status: TodoStatusSchema.optional(),
-  tags: z.array(TagNameSchema).max(20).optional(),
+	title: z.string().trim().min(1, "title must not be blank").max(100),
+	dueDate: DueDateSchema.optional(),
+	status: TodoStatusSchema.optional(),
+	tags: z.array(TagNameSchema).max(20).optional(),
 });
 export type CreateTodoRequest = z.input<typeof CreateTodoRequestSchema>;
 
 // PATCH /:user/todos/:id: 送ったフィールドだけを変える。タグは別のエンドポイントで操作する。
-export const UpdateTodoRequestSchema = CreateTodoRequestSchema.omit({ tags: true }).partial();
+export const UpdateTodoRequestSchema = CreateTodoRequestSchema.omit({
+	tags: true,
+}).partial();
 export type UpdateTodoRequest = z.input<typeof UpdateTodoRequestSchema>;
 
 // DELETE /:user/todos/:id: 本体なし。
 
 // POST /:user/todos/:id/tags: その Todo にタグを1つ付ける。なければそのユーザーのタグとして作る。
 export const AddTagRequestSchema = z.strictObject({
-  name: TagNameSchema,
+	name: TagNameSchema,
 });
 export type AddTagRequest = z.input<typeof AddTagRequestSchema>;
 

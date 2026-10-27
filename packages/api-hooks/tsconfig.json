@@ -1,18 +1,18 @@
 {
-  // JIT パッケージ: ビルドせず、apps 側 (Next / Vitest) が src の .ts を直接読む。
-  // ここは型チェック専用なので noEmit
-  "compilerOptions": {
-    "strict": true,
-    "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "isolatedModules": true,
-    "noEmit": true,
-    // api-client のソースを読むので、そこで使う process の型が要る
-    "types": ["node"],
-    "skipLibCheck": true
-  },
-  "include": ["src"]
+	// JIT パッケージ: ビルドせず、apps 側 (Next / Vitest) が src の .ts を直接読む。
+	// ここは型チェック専用なので noEmit
+	"compilerOptions": {
+		"strict": true,
+		"target": "ES2022",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"jsx": "react-jsx",
+		"isolatedModules": true,
+		"noEmit": true,
+		// api-client のソースを読むので、そこで使う process の型が要る
+		"types": ["node"],
+		"skipLibCheck": true
+	},
+	"include": ["src"]
 }

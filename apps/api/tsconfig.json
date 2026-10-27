@@ -1,20 +1,20 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "target": "ES2023",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+	"compilerOptions": {
+		"strict": true,
+		"target": "ES2023",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "strictPropertyInitialization": false,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"strictPropertyInitialization": false,
 
-    "rootDir": "src",
-    "outDir": "dist",
-    "sourceMap": true,
+		"rootDir": "src",
+		"outDir": "dist",
+		"sourceMap": true,
 
-    "types": ["node"],
-    "skipLibCheck": true
-  },
-  "include": ["src"]
+		"types": ["node"],
+		"skipLibCheck": true
+	},
+	"include": ["src"]
 }

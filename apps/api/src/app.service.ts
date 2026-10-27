@@ -4,7 +4,7 @@ import { Injectable } from "@nestjs/common";
 // @Injectable() = 「Nest が作って、他のクラスに渡してよい部品」という印。
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return "Hello World!";
-  }
+	getHello(): string {
+		return "Hello World!";
+	}
 }
