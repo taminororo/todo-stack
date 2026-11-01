@@ -92,7 +92,8 @@ export function CreateUserForm() {
 					invalid ? "text-sm text-destructive" : "text-sm text-muted-foreground"
 				}
 			>
-				文字・数字・「_」「-」で 30 文字まで。
+				ユーザー名を入力してください。文字・数字・「_」「-」が使え、30
+				文字までです。
 			</p>
 		</form>
 	);
