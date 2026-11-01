@@ -1,4 +1,4 @@
-import type { Tag, Todo } from "@todo/types";
+import { Tag, Todo } from "@todo/types";
 
 export const tags: Tag[] = [
 	{ id: 1, name: "買い物" },

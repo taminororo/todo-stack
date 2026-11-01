@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from "@nestjs/common";
-import type { TodosService } from "./todos.service.js";
+import { TodosService } from "./todos.service.js";
 
 @Controller(":user/tags")
 export class TagController {

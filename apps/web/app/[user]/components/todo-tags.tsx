@@ -1,7 +1,7 @@
 "use client";
 
 import { useAddTag, useRemoveTag } from "@todo/api-hooks";
-import type { Tag, Todo } from "@todo/types";
+import { Tag, Todo } from "@todo/types";
 import { Badge } from "@todo/ui/components/badge";
 import { Button } from "@todo/ui/components/button";
 import { PlusIcon, XIcon } from "lucide-react";

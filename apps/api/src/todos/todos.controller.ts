@@ -18,7 +18,7 @@ import {
 	UpdateTodoRequestSchema,
 } from "@todo/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe.js";
-import type { TodosService } from "./todos.service.js";
+import { TodosService } from "./todos.service.js";
 
 @Controller(":user/todos")
 export class TodoController {

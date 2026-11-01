@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import type { User } from "@todo/types";
-import type { PrismaService } from "../prisma/prisma.service.js";
+import { User } from "@todo/types";
+import { PrismaService } from "../prisma/prisma.service.js";
 
 const userSelect = { id: true, name: true } satisfies Prisma.UserSelect;
 

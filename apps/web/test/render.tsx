@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Toaster } from "@todo/ui/components/sonner";
-import type { ReactElement } from "react";
+import { ReactElement } from "react";
 
 // テストごとに新しい QueryClient を作り、キャッシュがテスト間で漏れないようにする。
 // retry は切る（失敗のテストで 3 回待たされないように）。

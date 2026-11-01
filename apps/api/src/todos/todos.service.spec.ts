@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { NotFoundException } from "@nestjs/common";
-import type { PrismaService } from "../prisma/prisma.service.js";
+import { PrismaService } from "../prisma/prisma.service.js";
 import { TodosService } from "./todos.service.js";
 
 // DB にはつながず、TodosService が使う Prisma のメソッドだけを差し替える

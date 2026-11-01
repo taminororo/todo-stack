@@ -1,6 +1,6 @@
 "use client";
 
-import type { TodoStatus } from "@todo/types";
+import { TodoStatus } from "@todo/types";
 import {
 	Select,
 	SelectContent,

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { ConflictException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import type { PrismaService } from "../prisma/prisma.service.js";
+import { PrismaService } from "../prisma/prisma.service.js";
 import { UsersService } from "./users.service.js";
 
 function createPrismaMock() {

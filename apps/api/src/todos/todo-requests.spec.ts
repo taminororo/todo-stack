@@ -4,7 +4,7 @@ import {
 	CreateTodoRequestSchema,
 	UpdateTodoRequestSchema,
 } from "@todo/types";
-import type { z } from "zod";
+import { z } from "zod";
 
 // ZodValidationPipe と同じスキーマで検証し、引っかかったプロパティ名の一覧を返す。
 // 知らないプロパティは path ではなく keys に入るので、そちらも拾う

@@ -2,7 +2,7 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { ApiError, api } from "@todo/api-client";
-import type { CreateUserRequest } from "@todo/types";
+import { CreateUserRequest } from "@todo/types";
 import { toast } from "sonner";
 
 export function useCreateUser() {

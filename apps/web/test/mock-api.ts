@@ -1,9 +1,4 @@
-import type {
-	CreateTodoRequest,
-	Tag,
-	Todo,
-	UpdateTodoRequest,
-} from "@todo/types";
+import { CreateTodoRequest, Tag, Todo, UpdateTodoRequest } from "@todo/types";
 import { HttpResponse, http } from "msw";
 import { server } from "./server";
 

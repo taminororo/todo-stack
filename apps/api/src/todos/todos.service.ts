@@ -1,12 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import type { Prisma } from "@prisma/client";
-import type {
-	CreateTodoRequest,
-	Tag,
-	Todo,
-	UpdateTodoRequest,
-} from "@todo/types";
-import type { PrismaService } from "../prisma/prisma.service.js";
+import { Prisma } from "@prisma/client";
+import { CreateTodoRequest, Tag, Todo, UpdateTodoRequest } from "@todo/types";
+import { PrismaService } from "../prisma/prisma.service.js";
 
 // Todo を返すときに一緒に読むもの。toTodo() はこの形の行を受け取る
 const todoInclude = {

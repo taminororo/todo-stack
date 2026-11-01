@@ -1,7 +1,7 @@
 "use client";
 
 import { useUpdateTodo } from "@todo/api-hooks";
-import type { Tag, Todo, TodoStatus } from "@todo/types";
+import { Tag, Todo, TodoStatus } from "@todo/types";
 import { Button } from "@todo/ui/components/button";
 import {
 	Select,

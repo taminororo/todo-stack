@@ -1,7 +1,7 @@
 "use client";
 
 import { useDeleteTodo } from "@todo/api-hooks";
-import type { Tag, Todo } from "@todo/types";
+import { Tag, Todo } from "@todo/types";
 import {
 	AlertDialog,
 	AlertDialogAction,
